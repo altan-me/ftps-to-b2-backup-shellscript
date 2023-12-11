@@ -1,6 +1,6 @@
 # Backup and Sync Script
 
-This script is designed to automate the process of downloading files from an FTPS server and syncing them to Backblaze B2 cloud storage. Additionally, it provides optional Slack notifications for progress updates and error alerts.
+This script is a custom solution developed due to limitations encountered with rclone in handling FTPS connections. Unlike rclone, which excels with a variety of cloud storage and network file transfer protocols, this script is specifically optimized for FTPS (File Transfer Protocol Secure) and not for SFTP (SSH File Transfer Protocol). It automates the process of downloading files from an FTPS server and syncing them to Backblaze B2 cloud storage, and provides optional Slack notifications for operational updates and error alerts.
 
 ## Features
 

@@ -25,7 +25,12 @@ done
 # -----------------------
 command -v lftp >/dev/null 2>&1 || { echo >&2 "lftp is not installed. Aborting."; exit 1; }
 command -v curl >/dev/null 2>&1 || { echo >&2 "curl is not installed. Aborting."; exit 1; }
-command -v b2 >/dev/null 2>&1 || { echo >&2 "b2 is not installed. Aborting."; exit 1; }
+if ! command -v b2 >/dev/null 2>&1; then
+    if ! command -v backblaze-b2 >/dev/null 2>&1; then
+        echo >&2 "Neither b2 nor backblaze-b2 is installed. Aborting."
+        exit 1
+    fi
+fi
 
 # -----------------------
 # Configuration
@@ -97,14 +102,19 @@ date +$TIME_FORMAT > $LAST_RUN_FILE
 # Sync to Backblaze B2
 if [ $USE_B2 -eq 1 ]; then
     # Sync to Backblaze B2
-    if ! b2 sync --threads $B2_THREADS --delete --replaceNewer $LOCAL_DIR b2://$B2_BUCKET; then
+    if ! backblaze-b2 sync --threads $B2_THREADS --replaceNewer $LOCAL_DIR b2://$B2_BUCKET; then
         log "Backblaze B2 sync failed"
         send_slack_notification "Backblaze B2 sync failed"
         exit 1
     fi
 fi
 
-success_message="Download and sync completed successfully at $(date)"
+# Deleting files and folders in the local directory
+log "Deleting all files and folders in $LOCAL_DIR..."
+rm -rf "$LOCAL_DIR"/*
+
+log "Local dir cleanup complete."
+success_message="Recording Download and sync to B2 completed successfully at $(date)"
 log "$success_message"
 send_slack_notification "$success_message" "#36A64F" # Green color for success
 

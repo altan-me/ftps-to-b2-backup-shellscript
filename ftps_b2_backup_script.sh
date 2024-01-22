@@ -54,6 +54,9 @@ LAST_RUN_FILE="last_run_time.txt"
 # Logging file
 LOG_FILE="script_log.log"
 
+# Start Script duration tracking
+duration_start=$(date +%s)
+
 # -----------------------
 # Functions
 # -----------------------
@@ -114,7 +117,12 @@ log "Deleting all files and folders in $LOCAL_DIR..."
 rm -rf "$LOCAL_DIR"/*
 
 log "Local dir cleanup complete."
-success_message="Recording Download and sync to B2 completed successfully at $(date)"
+
+# End time and duration calculation
+duration_end=$(date +%s)
+run_duration=$((duration_end - duration_start))
+
+success_message="Recording Download and sync to B2 completed successfully at $(date) and took $(run_duration) seconds"
 log "$success_message"
 send_slack_notification "$success_message" "#36A64F" # Green color for success
 

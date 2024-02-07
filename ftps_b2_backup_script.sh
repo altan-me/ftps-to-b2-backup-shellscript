@@ -90,7 +90,7 @@ fi
 # FTPS download with explicit TLS
 if ! lftp -e "set ftp:ssl-force true; set ftp:ssl-protect-data true; mirror --verbose --parallel=$PARALLEL_CON --newer-than=$LAST_RUN_TIME --depth-first $REMOTE_DIR $LOCAL_DIR; quit" -u $USER,$PASS $HOST; then
     log "FTPS download failed"
-    send_slack_notification "FTPS download failed"
+    send_slack_notification "🟥FTPS download failed"
     exit 1
 fi
 
@@ -107,7 +107,7 @@ if [ $USE_B2 -eq 1 ]; then
     # Sync to Backblaze B2
     if ! backblaze-b2 sync --threads $B2_THREADS --replaceNewer $LOCAL_DIR b2://$B2_BUCKET; then
         log "Backblaze B2 sync failed"
-        send_slack_notification "Backblaze B2 sync failed"
+        send_slack_notification "🟥 Backblaze B2 sync failed"
         exit 1
     fi
 fi
@@ -122,7 +122,7 @@ log "Local dir cleanup complete."
 duration_end=$(date +%s)
 run_duration=$((duration_end - duration_start))
 
-success_message="Recording Download and sync to B2 completed successfully at $(date) and took $(run_duration) seconds"
+success_message="✅ Recording Download and sync to B2 completed successfully at $(date) and took $run_duration seconds"
 log "$success_message"
 send_slack_notification "$success_message" "#36A64F" # Green color for success
 
